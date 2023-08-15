@@ -8,6 +8,10 @@ export const siteConfig = {
       title: 'Home',
       href: '/',
     },
+    {
+      title: 'Protected',
+      href: '/protected',
+    },
   ],
   links: {
     twitter: 'https://twitter.com/Sadge1996',

@@ -1,18 +1,17 @@
 import '@/styles/globals.css'
 
 import type { Metadata } from 'next'
+import { Toaster } from '@/providers/sonner-provider'
 import { ThemeProvider } from '@/providers/theme-provider'
 
 import { siteConfig } from '@/config/site'
 import { fontSans } from '@/lib/fonts'
 import { cn } from '@/lib/utils'
-import { SiteHeader } from '@/components/site-header'
-import { TailwindIndicator } from '@/components/tailwind-indicator'
 
 export const metadata: Metadata = {
   title: {
     default: siteConfig.name,
-    template: `%s - ${siteConfig.name}`,
+    template: `%s`,
   },
   description: siteConfig.description,
   themeColor: [
@@ -42,12 +41,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
           )}
         >
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <div className="relative flex min-h-screen flex-col">
-              <SiteHeader />
-              <div className="flex-1">{children}</div>
-            </div>
-            <TailwindIndicator />
+            {children}
           </ThemeProvider>
+          <Toaster />
         </body>
       </html>
     </>

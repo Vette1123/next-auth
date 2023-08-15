@@ -1,4 +1,6 @@
 import Link from 'next/link'
+import { LogIn } from 'lucide-react'
+import { getServerSession } from 'next-auth'
 
 import { siteConfig } from '@/config/site'
 import { buttonVariants } from '@/components/ui/button'
@@ -6,11 +8,27 @@ import { Icons } from '@/components/icons'
 import { MainNav } from '@/components/main-nav'
 import { ThemeToggle } from '@/components/theme-toggle'
 
-export function SiteHeader() {
+import LogoutPage from './logout'
+
+export async function SiteHeader() {
+  const session = await getServerSession()
+  const navItems = session
+    ? siteConfig.mainNav
+    : [
+        ...siteConfig.mainNav,
+        {
+          title: 'Login',
+          href: '/login',
+        },
+        {
+          title: 'Register',
+          href: '/register',
+        },
+      ]
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
       <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
-        <MainNav items={siteConfig.mainNav} />
+        <MainNav items={navItems} />
         <div className="flex flex-1 items-center justify-end space-x-4">
           <nav className="flex items-center space-x-1">
             <Link
@@ -44,6 +62,7 @@ export function SiteHeader() {
               </div>
             </Link>
             <ThemeToggle />
+            {session && <LogoutPage />}
           </nav>
         </div>
       </div>
