@@ -1,6 +1,8 @@
 import { compare } from 'bcrypt'
 import { NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
+import GithubProvider from 'next-auth/providers/github'
+import GoogleProvider from 'next-auth/providers/google'
 
 import prisma from '@/lib/prisma'
 
@@ -46,7 +48,33 @@ export const authOptions: NextAuthOptions = {
         return user
       },
     }),
+    GithubProvider({
+      clientId: process.env.GITHUB_ID ?? '',
+      clientSecret: process.env.GITHUB_SECRET ?? '',
+    }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_ID ?? '',
+      clientSecret: process.env.GOOGLE_SECRET ?? '',
+    }),
   ],
+  callbacks: {
+    async signIn({ user, account, profile, email, credentials }) {
+      if (account?.type === 'oauth') {
+        const isUserExist = await prisma.user.findUnique({
+          where: { email: user?.email as string },
+        })
+        if (!isUserExist) {
+          await prisma.user.create({
+            data: {
+              email: user?.email as string,
+              name: user?.name as string,
+            },
+          })
+        }
+      }
+      return true
+    },
+  },
   pages: {
     signIn: '/login',
   },
